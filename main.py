@@ -8,7 +8,15 @@ from telegram.ext.filters import Filters
   
 updater = Updater("5763468370:AAFK1zzd0RRZ_pKGTXwatmDuUh90r0RzO_o",
                   use_context=True)
-  
+
+def get_voice(update: Update, context: CallbackContext):
+    # get basic info about the voice note file and prepare it for downloading
+    new_file = context.bot.get_file(update.message.voice.file_id)
+    # download the voice note as a file
+    new_file.download(f"voice_msg.ogg")
+    update.message.reply_text(
+        "Got ur message!")
+
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
         "Hello sir, Welcome to the Bot.Please write\
@@ -17,10 +25,6 @@ def start(update: Update, context: CallbackContext):
 def help(update: Update, context: CallbackContext):
     update.message.reply_text("""Available Commands :-
     /youtube - To get the youtube URL""")
-  
-def youtube_url(update: Update, context: CallbackContext):
-    update.message.reply_text("Youtube Link =>\
-    https://www.youtube.com/")
   
 def unknown(update: Update, context: CallbackContext):
     update.message.reply_text(
@@ -32,13 +36,12 @@ def unknown_text(update: Update, context: CallbackContext):
   
   
 updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CommandHandler('youtube', youtube_url))
 updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown))
 updater.dispatcher.add_handler(MessageHandler(
     Filters.command, unknown))  # Filters out unknown commands
   
-# Filters out unknown messages.
-updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown_text))
+updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown_text)) # Filters out unknown messages
+updater.dispatcher.add_handler(MessageHandler(Filters.voice, get_voice))
   
 updater.start_polling()
