@@ -5,6 +5,8 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.commandhandler import CommandHandler
 from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
+
+voice_file = f"voice_msg.ogg"
   
 updater = Updater("5763468370:AAFK1zzd0RRZ_pKGTXwatmDuUh90r0RzO_o",
                   use_context=True)
@@ -13,9 +15,13 @@ def get_voice(update: Update, context: CallbackContext):
     # get basic info about the voice note file and prepare it for downloading
     new_file = context.bot.get_file(update.message.voice.file_id)
     # download the voice note as a file
-    new_file.download(f"voice_msg.ogg")
+    new_file.download(voice_file)
     update.message.reply_text(
         "Got ur message!")
+
+    # SOME KIND OF MAGIC MUST BE HERE
+
+    context.bot.sendAudio(chat_id=update.message.chat_id, audio=open(voice_file, "rb"), timeout=360)
 
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
